@@ -1,42 +1,144 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getPokemons } from '../../store/actions'
-import { Link } from 'react-router-dom'
+import { 
+		pageLoading, 
+		getPokemons,
+		searchPokemon
+} from '../../store/actions'
+import { useHistory } from 'react-router-dom'
 
-import Sidebar from '../../components/Sidebar/Sidebar'
 import Card from '../../components/Card/Card'
-import Footer from '../../components/Footer/Footer'
+import Pager from '../../components/Pager/Pager'
+
+
+
 const HomePage = () => {
 
 	const dispatch = useDispatch()
-	const pokemons = useSelector(state => state.pokemons)
+	const data = useSelector(state => state.pokemons)
+	const history = useHistory()
+	const params = new URLSearchParams(history.location.search)
+	const page = params.get('p') ?? 1
+
 
 	useEffect(() => {
-		dispatch(getPokemons())
+		dispatch(pageLoading(true))
+
+		const getdata = async () => {
+			const args = { page }
+			if( params.get('type') ) args.type = params.get('type')
+
+			if( 
+				!data.length && 
+				!params.get('name')
+			){
+				await dispatch(getPokemons(args))
+			}
+			dispatch(pageLoading(false))
+		}
+
+		getdata()
 	}, [])
 
-	return (
-		<div className="main-wrapper">
-			<Sidebar />
 
-			<div className="main-content">
-				{
-					pokemons.length > 0 ?
-					(<div className="cards-board">
-						{
-							pokemons.map(e => (
-								<div>
-									<Card key={ `item-${e.id}` } props={ e }/> 
-								</div>
-							))
-						}
-						</div>
-					):
-					null
+
+	useEffect(() => {
+		
+		// Search
+		if( params.get('name') ){
+			dispatch(pageLoading(true))
+
+			const getdata = async () => {
+				await dispatch(searchPokemon(params.get('name')))
+				dispatch(pageLoading(false))
+			}
+
+			getdata()
+		}
+
+		// Filter by type
+		else if( params.get('type') ){
+			dispatch(pageLoading(true))
+
+			const getdata = async () => {
+				const args = { page }
+				args.type = params.get('type')
+
+				if( 
+					!data.length && 
+					!params.get('name')
+				){
+					await dispatch(getPokemons(args))
 				}
-				<Footer />
-			</div>
-		</div>
+				dispatch(pageLoading(false))
+			}
+
+			getdata()
+		}
+
+		// Paginated navigation
+		else if( params.get('p') ){
+			dispatch(pageLoading(true))
+
+			const getdata = async () => {
+				if( !data.length ) await dispatch(getPokemons(page))
+				dispatch(pageLoading(false))
+			}
+
+			getdata()
+		}
+
+		/**
+		// Filter by type
+		else if( params.get('type') ){
+			if( params.get('name') ){
+				console.log('filtra por tipo y nombre')
+			}else if( params.get('attack') ){
+				console.log('filtra por tipo y ataque')
+			}else{
+				console.log('filtra por tipo')
+			}
+		}
+
+		// Filter by name
+		else if( params.get('name') ){
+			console.log('filtra por nombre')
+		}
+
+		// Filter by attack
+		else if( params.get('attack') ){
+			console.log('filtra por ataque')
+		}
+
+		console.log( params.get('type') )
+		console.log( params.get('name') )
+		 */
+		
+	}, [history.location.search])
+
+
+	return (
+		<>
+			{ data.body?.pokemons ? 
+				(
+					<div className="cards-board">
+					{
+						data.body.pokemons.map((e, i) => (
+							<div key={ e.id }>
+								<Card props={ e }/>
+							</div>
+						))
+					}
+					</div>
+				) :
+				null }
+			
+			{ data.body?.pokemons ? 
+				(<Pager 
+					page={ page } 
+					total_pages={ data.body?.pages } />) : 
+					null }
+		</>
 	)
 }
 

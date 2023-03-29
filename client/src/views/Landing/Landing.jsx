@@ -1,13 +1,52 @@
+import logo from '../../assets/img/brand.svg'
+import video from '../../assets/video/video.mp4'
 import { Link } from 'react-router-dom'
 
+import style from './Landing.module.css'
+
 const LandingPage = () => {
+
+
 	return (
-		<div>
-			<h1>Pokèmon</h1>
-			<div>
-				<Link to="/home">Ingresar</Link>
+		<section className={ style['landing-wrapper']}>
+			
+			<div className={ style.container }>
+				<div>
+					<div>
+						<img 
+							src={ logo } 
+							alt="Pokémon"
+							className={ style.logo } />
+					</div>
+					
+					<div className={ style.cta }>
+						<Link 
+							className={ style.btn } 
+							to="/home">
+							Ingresar
+						</Link>
+					</div>
+
+					<div className={ style.copy }>
+						<p>Pokémon API es un proyecto desarrollado 
+						para el bootcamp de Henry por @fitodac 
+						en Marzo de 2023.</p>
+						
+						<p>Para su realización se ha usado Express.js, 
+							React y librerías básicas de Node.
+						</p>
+					</div>
+				</div>
 			</div>
-		</div>
+
+			<video 
+				className={ style.video }
+				autoPlay
+				muted
+				loop>
+					<source src={ video } type="video/mp4" />
+			</video>
+		</section>
 	)
 }
 

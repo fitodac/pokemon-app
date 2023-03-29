@@ -1,0 +1,395 @@
+.form-wrapper{
+	padding: 40px 70px;
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	grid-template-rows: 1fr;
+	grid-column-gap: 40px;
+	grid-row-gap: 0px;
+	transition: .3s ease-in-out;
+}
+
+.input-image{
+	grid-area: 1/1/1/5;
+}
+
+
+.form-body{
+	grid-area: 1/5/1/13;
+	display: grid;
+	gap: 20px;
+}
+
+
+label{
+	color: #333;
+	font-size: .9rem;
+	font-weight: 600;
+	display: flex;
+	gap: 5px;
+}
+
+.label-required::after{
+	content: '';
+	background: var(--error);
+	width: 5px;
+	height: 5px;
+	display: block;
+	border-radius: 10px;
+	top: 2px;
+	position: relative;
+}
+
+input:focus{
+	outline: none;
+}
+
+.fieldset{
+	display: grid;
+	gap: 6px;
+}
+
+.input-lg{
+	background: var(--brand);
+	border: solid 1px var(--brand);
+	border-bottom: solid 1px var(--brand-600);
+	font-size: 3rem;
+	font-weight: 600;
+	line-height: 1;
+}
+
+
+.btn-sm{
+	background: var(--brand-600);
+	border: solid 1px var(--brand-600);
+	color: #fff;
+	font-size: .75rem;
+	font-weight: 600;
+	line-height: 1;
+	padding: 8px 20px;
+	display: inline-block;
+	border-radius: 7px;
+	cursor: pointer;
+	transition: .3s ease-in-out;
+}
+
+.btn-sm:hover,
+.btn-sm:active,
+.btn-sm:focus,
+.btn-sm:active:focus{
+	background: var(--brand-700);
+	border: solid 1px var(--brand-700);
+}
+
+
+/*
+Images
+*/
+.add-image{
+	background: rgba(255, 255, 255, .5);
+	border: none;
+	color: var(--brand-600);
+	font-size: .9rem;
+	font-weight: 600;
+	width: 100%;
+	height: 300px;
+	padding: 50px 10px;
+	display: block;
+	border-radius: 15px;
+	cursor: pointer;
+	transition: .2s ease-in-out;
+}
+
+.add-image:hover{
+	box-shadow: 0 0 20px rgba(0,0,0,.1);
+}
+
+.img-preview{
+	position: relative;
+	cursor: pointer;
+	border-radius: 15px;
+}
+
+.img-preview,
+.img-preview > *{
+	transition: .2s ease-in-out;
+}
+
+.img-preview span{
+	color: #FFF;
+	font-weight: 600;
+	text-align: center;
+	visibility: hidden;
+	opacity: 0;
+	left: 0;
+	right: 0;
+	top: 50%;
+	position: absolute;
+	
+}
+
+.img-preview img{
+	width: 100%;
+	object-fit: cover;
+}
+
+.img-preview:hover{
+	background: var(--brand-600);
+}
+
+.img-preview:hover span{
+	visibility: visible;
+	opacity: 1;
+}
+
+.img-preview:hover img{
+	opacity: .3;
+	filter: grayscale(1);
+}
+
+
+
+
+
+
+
+/*
+Form modal
+*/
+.form-modal{
+	background: rgba(0,0,0,.6);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	position: fixed;
+	z-index: 30;
+}
+
+.form-modal--wrapper{
+	background: #FFF;
+	width: 600px;
+	padding: 30px 50px 50px;
+}
+
+.form-modal--header{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.form-modal--title{
+	font-weight: 600;
+	line-height: 1;
+}
+
+.form-modal--close{
+	background: none;
+	border: none;
+	font-size: 35px;
+	line-height: 0;
+	width: 35px;
+	height: 35px;
+	padding: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	opacity: .4;
+	transition: .3s ease-in-out;
+}
+
+.form-modal--close:hover,
+.form-modal--close:active,
+.form-modal--close:focus,
+.form-modal--close:active:focus{
+	opacity: .8;
+}
+
+.form-modal--grid{
+	margin-top: 30px;
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	grid-template-rows: 1fr;
+	gap: 16px;
+}
+
+.form-modal--cell{
+	grid-column: span 1 / span 1;
+}
+
+.form-modal--card{
+	border: solid 1px #eee;
+	width: 100%;
+	height: 100px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 14px;
+	cursor: pointer;
+	position: relative;
+	box-shadow: 0 0 15px rgba(0,0,0,.1);
+	transition: .2s ease-in-out;
+}
+
+.form-modal--card img{
+	filter: grayscale(.8);
+}
+
+.form-modal--card:hover{
+	background: var(--brand);
+}
+
+.form-modal--card:hover img{
+	filter: grayscale(0);
+}
+
+.form-modal--card .pokeball{
+	border-width: 4px;
+	width: 40px;
+	height: 40px;
+	position: absolute;
+}
+
+.form-modal--card .pokeball::after{
+	border-width: 3px;
+	width: 10px;
+	height: 10px;
+}
+
+
+/*
+Errors
+*/
+.error{
+	color: var(--error);
+	font-size: .8rem;
+	line-height: 1;
+	font-weight: 500;
+	margin-left: 10px;
+	margin-top: 5px;
+}
+
+
+
+
+
+.btn-submit{
+	background: var(--brand-600);
+	border: solid 1px var(--brand-600);
+	color: #fff;
+	font-size: .9rem;
+	font-weight: 600;
+	line-height: 1;
+	padding: 18px 40px;
+	border-radius: 10px;
+	transition: .3s ease-in-out;
+	cursor: pointer;
+}
+
+.btn-submit:hover,
+.btn-submit:active,
+.btn-submit:focus,
+.btn-submit:active:focus{
+	background: var(--brand-700);
+	border: solid 1px var(--brand-700);
+}
+
+
+/*
+Saving
+*/
+.form-saving .form-wrapper{
+	pointer-events: none;
+	user-select: none;
+	transform: scale(.9);
+}
+
+.saving{
+	background: rgba(255, 217, 0, .7);
+	font-weight: 600;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.saving > div{
+	display: grid;
+	gap: 10px;
+}
+
+.pokeball {
+	--white: #fff;
+  --gray: #eee;
+  --red: #e53935;
+  --black: #212121;
+
+  position: relative;
+  width: 100px;
+  height: 100px;
+	margin: 0 auto;
+  background: linear-gradient(
+    to bottom,
+    var(--red),
+    var(--red) 48%,
+    var(--black) 48%,
+    var(--black) 55%,
+    var(--white) 55%
+  );
+  border-radius: 50%;
+  border: 8px solid var(--black);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2), inset 8px 5px 0 rgba(0, 0, 0, 0.2);
+  animation-duration: 900ms;
+  animation-name: shake;
+  animation-iteration-count: infinite;
+}
+
+.pokeball:before {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 7px;
+  right: 18px;
+  width: 14px;
+  height: 14px;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+}
+
+.pokeball:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background-color: var(--white);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  border: 5px solid var(--black);
+  box-shadow: -5px -3px 0 rgba(0, 0, 0, 0.2);
+}
+
+@keyframes shake {
+  0% { transform: translateX(0) rotate(0); }
+  15% { transform: translateX(-10px) rotate(-10deg); }
+  40% { transform: translateX(-15px) rotate(-15deg); }
+  60% { transform: translateX(15px) rotate(15deg); }
+}
+
+
+
+
+
+.btn-group{
+	display: flex;
+	justify-content: space-between;
+}
