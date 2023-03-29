@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import src from '../../assets/img/loading.gif'
 import style from './Loading.module.css'
 
@@ -17,9 +17,11 @@ const rand = () => Math.floor(Math.random() * messages.length)
 const Loading = () => {
 
 	const [msj, setMsj] = useState(messages[rand()])
+	const loader = useRef(null)
 
 	useEffect(() => {
 		setTimeout(() => {
+			if( !loader.current ) return
 			let r = rand()
 			let new_msj = messages[r]
 			if( new_msj !== msj ){
@@ -33,7 +35,9 @@ const Loading = () => {
 	}, [msj])
 
 	return (
-		<div className={ style.loading }>
+		<div 
+			className={ style.loading }
+			ref={ loader }>
 			<div className={ style['loading-container'] }>
 				<img src={ src } alt="Page loading" />
 				<div className="">{ msj }</div>
