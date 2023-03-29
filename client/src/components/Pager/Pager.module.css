@@ -1,0 +1,39 @@
+.pager{
+	padding: 20px 70px;
+	display: flex;
+	justify-content: flex-end;
+}
+
+
+.list{
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+
+.item{
+	background: var(--brand-600);
+	border: solid 1px var(--brand);
+	color: #fff;
+	font-size: .9rem;
+	line-height: 1;
+	font-weight: 600;
+	text-decoration: none;
+	width: 30px;
+	height: 30px;
+	list-style-type: none;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 6px;
+	transition: .3s ease-in-out;
+	cursor: pointer;
+}
+
+.item:hover,
+.item.active{
+	background: var(--brand);
+	border: solid 1px var(--brand-600);
+	color: var(--brand-700);
+}

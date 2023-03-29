@@ -1,0 +1,15 @@
+.hero{
+	background: url('../../assets/img/hero.jpg') no-repeat center -27vw / cover;
+	background-attachment: fixed;
+	width: calc(100% + 50px);
+	height: 500px;
+	max-width: 100%;
+	margin-bottom: -280px;
+	overflow: hidden;
+	position: relative;
+	box-shadow: 0 -320px 170px var(--brand) inset;
+}
+
+.hero img{
+	display: none;
+}
