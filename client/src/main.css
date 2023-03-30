@@ -18,6 +18,10 @@ body{
 	box-sizing: border-box;
 }
 
+img{
+	-webkit-user-drag: none;
+}
+
 .main-wrapper{
 	box-sizing: border-box;
 	height: 100vh;
@@ -94,4 +98,23 @@ body{
 .page-content{
 	position: relative;
 	z-index: 10;
+}
+
+
+
+.empty-data{
+	width: 300px;
+	font-size: .9rem;
+	font-weight: 700;
+	line-height: 1.4;
+	text-align: center;
+	text-transform: uppercase;
+	padding: 100px 0 100px;
+	margin: 0 auto;
+	display: grid;
+	place-items: center;
+}
+
+.empty-data img{
+	width: 200px;
 }
