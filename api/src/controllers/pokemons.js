@@ -1,10 +1,15 @@
 const axios = require('axios')
 const { Op, Sequelize } = require('sequelize')
-const { parsePokemon, parseLocalPokemon } = require('../utils/helpers')
+const { 
+	parsePokemon, 
+	parseLocalPokemon,
+	sortByName,
+	sortByAttack 
+} = require('../utils/helpers')
 const { Pokemon, Type } = require("../db")
 
 const per_page = 12
-const total_pokemons = 200
+const total_pokemons = 60
 
 
 const getPokemons = q => {
@@ -12,19 +17,28 @@ const getPokemons = q => {
 	return new Promise(async (resolve, reject) => {
 
 		let page = q.p
+		if( !page ) page = 1
+
 		const q_type = q.type
 		const q_sort = q.sort
 		const q_order = q.order
 
+		let min = 0
+		let max = per_page
+		let pokemons = []
 
-		if( !page ) page = 1
+
+		/******************************************/
+		// LOCAL POKEMONS
+		/******************************************/
 		const tot_db_pokemons = await Pokemon.count()
-		let min = (page - 1) * per_page
-		let max = (min + per_page) - tot_db_pokemons
-		const pokemons = []
+		min = page > 1 ? (page - 1) + (page - 1) * per_page : min
+		max = (min + per_page)
 
+		const base_min = min
+		const base_max = max
 
-		let local_pokemons = await Pokemon.findAll({
+		const local_pokemons = await Pokemon.findAll({
 			offset: min,
 			limit: max,
 			include: { 
@@ -36,26 +50,62 @@ const getPokemons = q => {
 			}
 		})
 		
-		for(let idx in local_pokemons.reverse()){
-			const char = parseLocalPokemon(local_pokemons[idx].dataValues)
-			if( q_type && char.types.includes(q_type.toLowerCase()) ) 
-				pokemons.push(char)
-			else
-				pokemons.push(char)
-		}
+		for(let idx in local_pokemons.reverse()) pokemons.push(parseLocalPokemon(local_pokemons[idx].dataValues))
+
+		// Filter by type
+		if( q_type )
+			pokemons = pokemons.filter(e => e.types.some(t => t.toLowerCase() === q_type.toLowerCase()))
 
 
+
+		/******************************************/
+		// API POKEMONS
+		/******************************************/
 		if( min === 0 ) min = 1
-		if( page > 1 ) min = ( min - tot_db_pokemons ) + 1
+		if( max === per_page ) max++
+		if( pokemons.length) max = max - pokemons.length
+		
+		let pok_id = min
+		let limit = tot_db_pokemons
 
-		for(let i = min; i <= max; i++){
-			const pok = await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`).then(r => r.data)
-			pokemons.push(parsePokemon(pok))
+		const getPokemon = async () => {
+			if( pokemons.length === per_page ) return
+			if( limit === total_pokemons ) return
+			limit++
+
+			const getpok = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pok_id}`).then(r => r.data)
+			const pok = parsePokemon(getpok)
+
+			if( q_type ){
+				if( pok.types.some(e => e.toLowerCase() === q_type.toLowerCase()) ){
+					pokemons.push(pok)
+				}
+				pok_id++
+				await getPokemon()
+			}else{
+				pokemons.push(pok)
+				pok_id++
+				await getPokemon()
+			}
+
 		}
+
+		await getPokemon()
+
+		if( q_sort && (q_order === 'asc' || q_order === 'desc') ){
+			if( 'name' === q_sort ) pokemons = sortByName(pokemons, q_order)
+			if( 'attack' === q_sort ) pokemons = sortByAttack(pokemons, q_order)
+		}
+
 
 		resolve({
-			pokemons: pokemons,
-			pages: Math.round((total_pokemons - tot_db_pokemons) / per_page)
+			total: pokemons.length,
+			min: base_min,
+			max: base_max,
+			pages: q_type ?
+							Math.round(pokemons.length / per_page) : 
+							Math.round((total_pokemons - tot_db_pokemons) / per_page),
+			pokemons,
 		})
 
 	})
@@ -90,7 +140,7 @@ const getPokemonById = id => {
 		}else{
 			const pokemon = await axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`)
 											.then(r => {
-												console.log(r.data.sprites)
+												
 												return r.data
 											})
 											.catch(err => {
@@ -106,49 +156,39 @@ const getPokemonById = id => {
 
 
 
-const getPokemonsBy = by => {
+const getPokemonsBy = name => {
 	return new Promise(async (resolve, reject) => {
 		const pokemons = []
 
-		if( !isNaN(by) ){
-			// Busca por ID
-
-			
-		
-		}else{
-			// Busca por nombre
-
-			// Busca en la DB
-			let local_pokemons = await Pokemon.findAll({
-				where: {
-					name: { [Op.iLike]: `%${by.toLowerCase()}%` }
-				},
-				include: { 
-					model: Type,
-					attributes: ['name'],
-					through: {
-						attributes: []
-					}
+		// Busca en la DB
+		let local_pokemons = await Pokemon.findAll({
+			where: {
+				name: { [Op.iLike]: `%${name.toLowerCase()}%` }
+			},
+			include: { 
+				model: Type,
+				attributes: ['name'],
+				through: {
+					attributes: []
 				}
-			})
-
-			for(let idx in local_pokemons.reverse()){
-				pokemons.push(parseLocalPokemon(local_pokemons[idx].dataValues))
 			}
+		})
 
-
-			await axios.get(`https://pokeapi.co/api/v2/pokemon/${by.toLowerCase()}`)
-				.then(r => {
-					pokemons.push(parsePokemon(r.data))
-				})
-				.catch(err => {
-					console.log('err:', err)
-				})
-
-			if( pokemons.length ) resolve({ pokemons: pokemons, pages: null })
-			else reject()
+		for(let idx in local_pokemons.reverse()){
+			pokemons.push(parseLocalPokemon(local_pokemons[idx].dataValues))
 		}
 
+
+		await axios.get(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`)
+			.then(r => {
+				pokemons.push(parsePokemon(r.data))
+			})
+			.catch(err => {
+				console.log('err:', err)
+			})
+
+		if( pokemons.length ) resolve({ pokemons: pokemons, pages: null })
+		else reject()
 	})
 }
 
@@ -206,9 +246,37 @@ const createPokemon = async data => {
 }
 
 
+
+const test = type => {
+	return new Promise(async (resolve, reject) => {
+
+		const pokemons = []
+		let count_types = 0
+
+		for(let i = 1; i <= total_pokemons; i++){
+			const getpok = await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`).then(r => r.data)
+			const pok = parsePokemon(getpok)
+			const { id, name, types } = pok
+			if( type ){
+				if( types.some(e => e.toLowerCase() === type.toLowerCase()) ) count_types++
+			}
+			pokemons.push({id, name, types})
+		}
+
+		resolve({
+			types: count_types,
+			pokemons
+		})
+
+	})
+}
+
+
+
 module.exports = {
 	getPokemons,
 	getPokemonById,
 	getPokemonsBy,
-	createPokemon
+	createPokemon,
+	test
 }

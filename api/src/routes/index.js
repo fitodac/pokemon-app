@@ -1,3 +1,4 @@
+const { roleTypes } = require('element-plus');
 const { Router } = require('express');
 // Importar todos los routers;
 // Ejemplo: const authRouter = require('./auth.js');
@@ -6,7 +7,8 @@ const {
 	getPokemons,
 	getPokemonById,
 	getPokemonsBy,
-	createPokemon
+	createPokemon,
+	test
 } = require('../controllers/pokemons')
 
 const {
@@ -32,8 +34,7 @@ router.get('/pokemons', async (req, res) => {
 	// Get Pokémon by name
 	if( req.query.name ){
 		try {
-			const pokemon = await getPokemonsBy(req.query.name)
-			success(req, res, pokemon, 200, "La búsqueda se realizó con éxito")
+			success(req, res, await getPokemonsBy(req.query.name), 200, "La búsqueda se realizó con éxito")
 		} catch (err) {
 			error(req, res, {message: "Tu búsqueda no produjo ningún resultado"}, 404, err)
 		}
@@ -44,32 +45,17 @@ router.get('/pokemons', async (req, res) => {
 	// Paginate
 	else if( req.query ){
 		try {
-			const pokemons = await getPokemons(req.query)
-			success(req, res, pokemons, 200, "Se obtuvieron todos los Pokémons")
+			success(req, res, await getPokemons(req.query), 200, "Se obtuvieron todos los Pokémons")
 		} catch (err) {
 			error(req, res, {error: err.message}, 404)
 		}
 		return
 	}
-
-
-
-	// if( req.query.name ){
-	// 	try {
-	// 		const pokemon = await getPokemonsBy(req.query.name)
-	// 		success(req, res, pokemon, 200, "La búsqueda se realizó con éxito")
-	// 	} catch (err) {
-	// 		error(req, res, {message: "Tu búsqueda no produjo ningún resultado"}, 404, err)
-	// 	}
-
-	// 	return
-	// }
 	
 
 	// Get a list of Pokémons 
 	try {
-		const pokemons = await getPokemons()
-		success(req, res, pokemons, 200, "Se obtuvieron todos los Pokémons")
+		success(req, res, await getPokemons(), 200, "Se obtuvieron todos los Pokémons")
 	} catch (err) {
 		error(req, res, {error: err.message}, 404)
 	}
@@ -80,8 +66,7 @@ router.get('/pokemons', async (req, res) => {
 // Get Pokémon by ID
 router.get('/pokemons/:id', async (req, res) => {
 	try {
-		const pokemon = await getPokemonById(req.params.id)
-		res.status(200).json(pokemon)
+		res.status(200).json(await getPokemonById(req.params.id))
 	} catch (err) {
 		error(req, res, {error: err}, 404)
 	}
@@ -101,8 +86,17 @@ router.post('/pokemons', async (req, res) => {
 
 router.get('/types', async (req, res) => {
 	try {
-		const types = await getTypes()
-		res.status(200).json(types)
+		res.status(200).json(await getTypes())
+	} catch (err) {
+		error(req, res, {error: err.message}, 404)
+	}
+})
+
+
+
+router.get('/test', async (req, res) => {
+	try {
+		res.status(200).json(await test(req.query.type))
 	} catch (err) {
 		error(req, res, {error: err.message}, 404)
 	}
