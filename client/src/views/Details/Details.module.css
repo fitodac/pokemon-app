@@ -1,0 +1,23 @@
+.details{
+	width: 500px;
+	margin: -200px auto 0;
+	/* top: -200px; */
+	position: relative;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+
+}
+
+.details > *{
+	grid-column: span 1 / span 1;
+}
+
+
+.image{
+	--size: 400px;
+	
+	width: var(--size);
+	height: var(--size);
+	object-fit: cover;
+	margin-top: -100px;
+}
