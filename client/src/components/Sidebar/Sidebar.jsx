@@ -178,7 +178,7 @@ const Sidebar = () => {
 										onChange={ filterType }
 										className={ style['filter-select'] }>
 											<option value="">Selecciona un tipo</option>
-											{ types.map(e => (
+											{ types.length > 0  && types.map(e => (
 												<option 
 													key={ e.id } 
 													value={ e.name }>
