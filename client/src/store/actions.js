@@ -1,17 +1,12 @@
 import axios from 'axios'
+import { setUrlPager } from '../utils/url'
 
 
 const api = 'http://localhost:3001/'
 
 const pageLoading = val => {
-	return dispatch => {
-		dispatch({
-			type: 'PAGE_LOAD',
-			payload: val
-		})
-	}
+	return dispatch => dispatch({ type: 'PAGE_LOAD', payload: val })
 }
-
 
 
 
@@ -27,12 +22,10 @@ const getPokemons = params => {
 			.then(resp => {
 				console.log(`El servidor respondió con:`, resp)
 
-				dispatch({
-					type: 'GET_POKEMONS',
-					payload: resp.data
-				})
-
+				dispatch({ type: 'GET_POKEMONS', payload: resp.data })
 				dispatch({ type: 'SERVER_ERROR', payload: false })
+
+				return true
 			})
 			.catch(err => {
 				console.log('error', err)
@@ -40,6 +33,8 @@ const getPokemons = params => {
 					type: 'SERVER_ERROR',
 					payload: true
 				})
+
+				return true
 			})
 	}
 }
@@ -50,30 +45,14 @@ const getTypes = () => {
 	return async function(dispatch){
 		return await axios.get(`${api}types`)
 			.then(resp => {
-				dispatch({
-					type: 'GET_TYPES',
-					payload: resp.data
-				})
-
+				dispatch({ type: 'GET_TYPES', payload: resp.data })
 				dispatch({ type: 'SERVER_ERROR', payload: false })
 			})
 			.catch(err => {
 				console.log('error', err)
-				dispatch({
-					type: 'SERVER_ERROR',
-					payload: true
-				})
+				dispatch({ type: 'SERVER_ERROR', payload: true })
 			})
 	}
-}
-
-
-
-const sortPokemons = (sort, order) => {
-	return dispatch => dispatch({
-												type: 'SORT',
-												payload: {sort, order}
-											})
 }
 
 
@@ -84,39 +63,33 @@ const searchPokemon = params => {
 	
 	return async function(dispatch){
 		if( !search ){
-			dispatch({
-				type: 'SHOW_POPUP',
-				payload: 'No he sabido que Pokémon tengo que buscar'
-			})
+			dispatch({ type: 'SHOW_POPUP', payload: 'No he sabido que Pokémon tengo que buscar' })
 			return
 		}
 
 		return await axios.get(`${api}pokemons/${search}`)
 			.then(resp => {
-				dispatch({
-					type: 'GET_POKEMONS',
-					payload: resp.data
-				})
-				
+				// params = new URLSearchParams(search)
+				// dispatch({ type: 'SET_SEARCH', payload: params.get('name') })
+				dispatch({ type: 'GET_POKEMONS', payload: resp.data })
 				dispatch({ type: 'SERVER_ERROR', payload: false })
+
+				return true
 			})
 			.catch(err => {
-				dispatch({
-					type: 'SHOW_POPUP',
-					payload: err.response.data.error.message
-				})
+				console.log('error:', err)
+				
+				dispatch({ type: 'SHOW_POPUP', payload: err.response.data.error.message })
 
 				setTimeout(() => {
-					dispatch({
-						type: 'HIDE_POPUP',
-						payload: err.response.data.error.message
-					})
+					dispatch({ type: 'HIDE_POPUP', payload: err.response.data.error.message })
 				}, 3000)
 				
-				console.log('error:', err)
+				return true
 			})
 	}
 }
+
 
 
 const errorPopup = (status, message) => {
@@ -135,11 +108,35 @@ const errorPopup = (status, message) => {
 }
 
 
+
+const setType = val => {
+	return dispatch => dispatch({ type: 'SET_TYPE', payload: val || '' })
+}
+
+const setSort = (sort, order) => {
+	return dispatch => dispatch({ type: 'SET_SORT', payload: {sort, order}})
+}
+
+const setPage = p => {
+	return dispatch => dispatch({ type: 'SET_PAGE', payload: p})
+}
+
+const resetFilters = val => {
+	return dispatch => dispatch({ type: 'FILTERS', payload: val})
+}
+
+
+
+
+
 export {
 	pageLoading,
 	getPokemons,
 	getTypes,
-	sortPokemons,
 	searchPokemon,
+	setType,
+	setSort,
+	setPage,
+	resetFilters,
 	errorPopup
 }

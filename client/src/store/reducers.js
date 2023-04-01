@@ -1,11 +1,12 @@
-import {
-	sortByName,
-	sortByAttack
-} from '../utils/sort'
-
 const initial_state = {
 	pokemons: [],
-	pages: 0,
+	page: 1,
+	pages: 1,
+	type: '',
+	sort: '',
+	order: '',
+	filters: false,
+	// search: '',
 	types: [],
 	server_error: false,
 	popup: {
@@ -15,18 +16,35 @@ const initial_state = {
 	loading: false
 }
 
+
 const rootReducer = (state = initial_state, action) => {
 	switch( action.type ){
 		case 'GET_POKEMONS':
 			return {
 				...state, 
 				pokemons: action.payload.body.pokemons,
-				pages: action.payload.body.pages ?? 1
+				pages: action.payload.body.pages || 1
 			}
 		
+		case 'SET_TYPE':
+			return {...state, type: action.payload}
+		
+		case 'SET_SORT':
+			const { sort, order } = action.payload
+			return {...state, sort: sort, order: order}
+		
+		case 'SET_PAGE':
+			return {...state, page: action.payload}
+
 		case 'GET_TYPES':
 			return {...state, types: action.payload}
+		
+		case 'FILTERS':
+			return {...state, filters: action.payload}
 
+		// case 'SET_SEARCH':
+		// 	return {...state, search: action.payload}
+		
 		case 'PAGE_LOAD':
 			return {...state, loading: action.payload }
 
@@ -35,15 +53,6 @@ const rootReducer = (state = initial_state, action) => {
 
 		case 'HIDE_POPUP':
 			return {...state, popup: { active: false, message: '' } }
-		
-		case 'SORT': 
-			const { sort, order } = action.payload
-			const pokemons = [...state.pokemons]
-			
-			if( 'name' === sort ) sortByName(pokemons, order)
-			if( 'attack' === sort ) sortByAttack(pokemons, order)
-			
-			return {...state, filters: action.payload}
 
 		case 'SERVER_ERROR':
 			return {...state, server_error: action.payload}
