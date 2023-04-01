@@ -154,10 +154,7 @@ Filter
 	cursor: pointer;
 }
 
-.filter-box--btn:hover,
-.filter-box--btn:active,
-.filter-box--btn:focus:active,
-.filter-box--btn:focus{
+.filter-box--btn:hover{
 	background: var(--brand);
 	border-color: var(--brand);
 	color: #000;

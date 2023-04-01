@@ -4,7 +4,8 @@ import {
 		pageLoading, 
 		getPokemons,
 		searchPokemon,
-		sortPokemons
+		setType,
+		setPage
 } from '../../store/actions'
 import {
 	sortByName,
@@ -20,41 +21,48 @@ import Pager from '../../components/Pager/Pager'
 
 const HomePage = () => {
 
-	const dispatch = useDispatch()
-	const data = useSelector(state => state.pokemons)
-	const pages = useSelector(state => state.pages)
-	const [pokemons, setPokemons] = useState(data)
+	const dispatch = useDispatch(),
+				data = useSelector(state => state.pokemons),
+				page = useSelector(state => state.page),
+				type = useSelector(state => state.type),
+				sort = useSelector(state => state.sort),
+				order = useSelector(state => state.order),
+				filters = useSelector(state => state.filters),
+				[pokemons, setPokemons] = useState(data)
 	useEffect(() => setPokemons(data), [data])
-	const history = useHistory()
-	const params = new URLSearchParams(history.location.search)
-	
-
-	if( params.get('p') > pages ){
-		params.set('p', pages)
-		const srch = params.toString()
-		window.history.pushState(null, null, srch)
-	}
-	const page = params.get('p') ?? 1
-	const [init, setInit] = useState(false)
+	const history = useHistory(),
+				params = new URLSearchParams(history.location.search),
+				[loadingData, setLoadingData] = useState(false),
+				[init, setInit] = useState(false)
 
 
 
 	const loadData = async (cb) => {
+		setLoadingData(true)
 		dispatch(pageLoading(true))
-		const args = { }
+		const args = {}
 		if( history.location.search ) args.search = history.location.search
-		await dispatch(cb(args))
-		dispatch(pageLoading(false))
+		const data = await dispatch(cb(args))
+		
+		if( data ){
+			setLoadingData(false)
+			dispatch(pageLoading(false))
+		}
+		
+		setInit(true)
 	}
 
 
+
+
 	useEffect(() => {
-		if( !history.location.search.length || params.toString() === `p=${params.get('p')}` ){
-			console.log('home init')
-			loadData(getPokemons)
-			setInit(true)
+		if( !history.location.search.length || params.has('p') ){
+			(async () => {
+				console.log('home init')
+				await loadData(getPokemons)
+			})()
 		}
-	}, [])
+	}, []) // eslint-disable-line react-hooks/exhaustive-deps
 
 
 
@@ -64,54 +72,56 @@ const HomePage = () => {
 
 		// Search
 		if( params.has('name') ){
-			console.log('Busca por nombre')
+			console.log('Busca por nombre') /////
+			dispatch(setType(''))
 			loadData(searchPokemon)
 		}
 
-		else{
-			
-			// Filter by type
-			if( params.has('type') && !params.has('sort') && !params.has('order') )
-			{
-				console.log('Busca por tipo')
-				loadData(getPokemons)
-			}
+	}, [history.location.search]) // eslint-disable-line react-hooks/exhaustive-deps
 
-			else if( params.has('type') && params.has('sort') && params.has('order') )
-			{
-				console.log('Busca por tipo y lo ordena (tiene type)')
-				loadData(getPokemons)
-			}
 
-			else if( !params.has('type') && params.has('sort') && params.has('order') )
-			{
-				console.log('Busca por tipo y lo ordena (no tiene type)')
-				
-				if( !pokemons.length ){
-					loadData(getPokemons)
-				}else{
-					if( 'name' === params.get('sort') ){
-						setPokemons( sortByName(pokemons, params.get('order')) )
-					}
-					if( 'attack' === params.get('sort') ){
-						setPokemons( sortByAttack(pokemons, params.get('order')) )
-					}
-				}
-			}
 
-			else if( params.has('p') && !params.has('type') && !params.has('sort') && !params.has('order') ){
-				console.log('paginado')
-				loadData(getPokemons)
-			}
-
-			else if( !params.has('type') && !params.has('sort') && !params.has('order') ){
-				console.log('home inicio')
-				if( init ) loadData(getPokemons)
-			}
-
+	useEffect(() => {
+		const g = async () => {
+			console.log('Busca por tipo')
+			setPage(1)
+			dispatch(setType(params.get('type')))
+			await loadData(getPokemons)
 		}
+		if( !loadingData && filters ) g()
+	}, [type]) // eslint-disable-line react-hooks/exhaustive-deps
 
-	}, [history.location.search])
+
+	useEffect(() => {
+		switch(sort){
+			case 'name':
+				setPokemons( sortByName(pokemons, order) )
+				break;
+			case 'attack':
+				setPokemons( sortByAttack(pokemons, order) )
+				break;
+			default:
+				return
+		}
+	}, [sort, order]) // eslint-disable-line react-hooks/exhaustive-deps
+
+
+	useEffect(() => {
+		if( params.has('p')){
+			console.log('paginado')
+			setPage(params.get('p'))
+			loadData(getPokemons)
+		}
+	}, [page]) // eslint-disable-line react-hooks/exhaustive-deps
+
+
+	useEffect(() => {
+		if( init && !filters ){
+			console.log('Se borraron los filtros') ////
+			const g = async () => await loadData(getPokemons)
+			setTimeout(() => g(), 200)
+		}
+	}, [filters]) // eslint-disable-line react-hooks/exhaustive-deps
 
 
 
@@ -129,12 +139,13 @@ const HomePage = () => {
 						))}
 						</div>
 
-						<Pager page={ page } total_pages={ pages } />
+						<Pager />
 					</>
 				) :
 				null }
 
-			{ pokemons.length > 0 && init ? 
+
+			{ !pokemons.length && init ? 
 				(
 					<div className="page-content">
 						<div className="empty-data">

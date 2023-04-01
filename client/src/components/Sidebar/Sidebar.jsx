@@ -6,8 +6,18 @@ import {
 import { useHistory } from 'react-router-dom'
 import { 
 	getTypes, 
-	pageLoading
+	pageLoading,
+	setType,
+	setSort,
+	setPage,
+	resetFilters
 } from '../../store/actions'
+
+import {
+	setUrlSearch,
+	setUrlType,
+	setUrlSort
+} from '../../utils/url'
 
 import { Link, useLocation } from 'react-router-dom'
 import logo from '../../assets/img/brand.svg'
@@ -26,17 +36,18 @@ const Sidebar = () => {
 	const location = useLocation()
 	const types = useSelector(state => state.types)
 	const pokemons = useSelector(state => state.pokemons)
+	const type = useSelector(state => state.type)
+	const sort = useSelector(state => state.sort)
+	const order = useSelector(state => state.order)
 	const history = useHistory()
 	const params = new URLSearchParams(history.location.search)
 	const [ search, setSearch ] = useState(params.get('name') ?? '')
-	const [ filter_type, setFilterType ] = useState(params.get('type') ?? '')
-	const [ filter_name, setFilterName ] = useState(params.get('sort') === 'name')
-	const [ filter_attack, setFilterAttack ] = useState(params.get('sort') === 'attack')
+	const [is_mounted, setIsMounted] = useState(false)
 
 
 	useEffect(() => {
+		const params = new URLSearchParams(history.location.search)
 		if( !params.has('name') ) setSearch('')
-		if( !params.has('type') ) setFilterType('')
 	}, [history.location.search])
 
 	// Search
@@ -44,88 +55,70 @@ const Sidebar = () => {
 
 	const handleSearch = async e => {
 		e.preventDefault()
-		setFilterType('')
-		setFilterAttack(null)
-		setFilterName(null)
-		history.push(`/home?name=${search}`)
+		dispatch(setType(''))
+		dispatch(setSort('', ''))
+		dispatch(resetFilters(true))
+		
+		history.push(setUrlSearch(search))
 	}
 
 
 	useEffect(() => {
-		dispatch(pageLoading(true))
+		if( !is_mounted){
+			dispatch(pageLoading(true))
 
-		const getdata = async () => {
-			if( !types.length ) await dispatch(getTypes())
-			dispatch(pageLoading(false))
+			const getdata = async () => {
+				if( !types.length ) await dispatch(getTypes())
+				dispatch(pageLoading(false))
+			}
+
+			getdata()
+			setIsMounted(true)
 		}
+	}, [dispatch, types, is_mounted])
 
-		getdata()
-	}, [])
 
 
 	// Filter by type
 	const filterType = e => {
 		setSearch('')
-		setFilterType(e.target.value)
-		
-		if( e.target.value ){
-			params.set('type', e.target.value)
-			let s = ''
-			for(const [i,v] of params)
-				if( i !== 'name' ) s += `${i}=${v}&`
-			history.push(`${history.location.pathname}?${s.slice(0,-1)}`)
-		}else{
-			let s = ''
-			for(const [i,v] of params)
-				if( i !== 'type' ) s += `${i}=${v}&`
-			history.push(`${history.location.pathname}?${s.slice(0,-1)}`)
-		}
+		dispatch(setType(e.target.value))
+		dispatch(resetFilters(true))
+		history.push(setUrlType(e.target.value))
 	}
 
 
 	// Filter by name
 	const filterName = e => {
-		setFilterAttack(null)
-		setFilterName(e)
-
-		params.set('sort', 'name')
-		params.set('order', e)
-		let s = ''
-		for(const [i,v] of params)
-			if( v !== 'attack' ) s += `${i}=${v}&`
-		history.push(`${history.location.pathname}?${s.slice(0,-1)}`)
+		dispatch(setSort('name', e))
+		dispatch(resetFilters(true))
+		history.push(setUrlSort('name', e))
 	}
 
 
 	// Filter by attack
 	const filterAttack = e => {
-		setFilterName(null)
-		setFilterAttack(e)
-
-		params.set('sort', 'attack')
-		params.set('order', e)
-		let s = ''
-		for(const [i,v] of params)
-			if( v !== 'name' ) s += `${i}=${v}&`
-		history.push(`${history.location.pathname}?${s.slice(0,-1)}`)
+		dispatch(setSort('attack', e))
+		dispatch(resetFilters(true))
+		history.push(setUrlSort('attack', e))
 	}
 
 
 	// Reset filters
 	const filterReset = async () => {
+		dispatch(resetFilters(false))
 		setSearch('')
-		setFilterType('')
-		setFilterName(null)
-		setFilterAttack(null)
-
-		setTimeout(() => history.push(`/home${params.has('p') ? `?p=${params.get('p')}`: ''}`), 200)
+		dispatch(setType(''))
+		dispatch(setSort('', ''))
+		dispatch(setPage(1))
+		setTimeout(() => history.push(`/home`), 200)
 	}
 
 
-	const filterNameAsc_ClassName = () => setFilterBtnClassName(filter_name, params.get('order'), 'asc')
-	const filterNameDesc_ClassName = () => setFilterBtnClassName(filter_name, params.get('order'), 'desc')
-	const filterAttackAsc_ClassName = () => setFilterBtnClassName(filter_attack, params.get('order'), 'asc')
-	const filterAttackDesc_ClassName = () => setFilterBtnClassName(filter_attack, params.get('order'), 'desc')
+	const filterNameAsc_ClassName = () => setFilterBtnClassName('name' === sort, order, 'asc')
+	const filterNameDesc_ClassName = () => setFilterBtnClassName('name' === sort, order, 'desc')
+	const filterAttackAsc_ClassName = () => setFilterBtnClassName('attack' === sort, order, 'asc')
+	const filterAttackDesc_ClassName = () => setFilterBtnClassName('attack' === sort, order, 'desc')
 
 
 
@@ -181,7 +174,7 @@ const Sidebar = () => {
 									<div className={ style['filter-box--label']}>Por tipo</div>
 									
 									<select  
-										value={ filter_type }
+										value={ type }
 										onChange={ filterType }
 										className={ style['filter-select'] }>
 											<option value="">Selecciona un tipo</option>
