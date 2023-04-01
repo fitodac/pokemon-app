@@ -1,9 +1,17 @@
+import { useLocation } from 'react-router-dom'
+
 import style from './Hero.module.css'
 
 
 const Hero = () => {
+	const location = useLocation()
+
 	return (
-		<div className={ style.hero }></div>
+		<>
+		{ '/' === location.pathname ? 
+			null : 
+			(<div className={ style.hero }></div>)}
+		</>
 	)
 }
 

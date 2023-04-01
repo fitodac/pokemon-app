@@ -1,10 +1,28 @@
-import logo from '../../assets/img/brand.svg'
-import video from '../../assets/video/video.mp4'
+import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { pageLoading } from '../../store/actions'
+
+
 import { Link } from 'react-router-dom'
 
+import logo from '../../assets/img/brand.svg'
+import video from '../../assets/video/video.mp4'
 import style from './Landing.module.css'
 
 const LandingPage = () => {
+
+	const dispatch = useDispatch()
+	const [video_loaded, setVideoLoaded] = useState(false)
+
+	useEffect(() => {
+		if( !video_loaded ){
+			dispatch(pageLoading(true))
+		}else{
+			dispatch(pageLoading(false))
+
+		}
+	}, [video_loaded, dispatch])
+
 
 
 	return (
@@ -43,7 +61,8 @@ const LandingPage = () => {
 				className={ style.video }
 				autoPlay
 				muted
-				loop>
+				loop
+				onLoad={ () => setVideoLoaded(true) }>
 					<source src={ video } type="video/mp4" />
 			</video>
 		</section>
