@@ -82,6 +82,7 @@ const Sidebar = () => {
 	// Filter by type
 	const filterType = e => {
 		setSearch('')
+		dispatch(setSort('', ''))
 		dispatch(setType(e.target.value))
 		dispatch(resetFilters(true))
 		history.push(setUrlType(e.target.value))
@@ -126,9 +127,9 @@ const Sidebar = () => {
 
 	return (
 		<div className={ style.sidebar }>
-			<Link to="/home">
+			<div onClick={ () => filterReset() }>
 				<img src={ logo } alt="Pokémon" className={ style.logo }/>
-			</Link>
+			</div>
 
 			{ '/home' === location.pathname ?
 				(<>

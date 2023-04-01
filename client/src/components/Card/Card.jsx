@@ -27,8 +27,8 @@ const Card = props => {
 				alt={ name } 
 				className={ style['card-img'] } />
 
-			{createdInDb ?
-				(<div className={ `${style['card-label']} ${style['custom']}` }>Custom</div>): 
+			{ createdInDb ?
+				(<div className={ `${style['card-label']} ${style['custom']}` }>Custom</div>) : 
 				(<div className={ `${style['card-label']} ${style['original']}` }>Original</div>)
 			}
 

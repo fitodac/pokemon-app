@@ -27,8 +27,6 @@ const setUrlPager = p => {
 	params.set('p', p)
 	let search = ''
 	for(const [i,v] of params) search += `${i}=${v}&`
-	console.log(url_path)
-
 	return `${url_path}?${search.slice(0,-1)}`
 }
 

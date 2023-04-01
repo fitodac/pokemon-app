@@ -29,7 +29,8 @@ const DetailsPage = () => {
 		speed,
 		height,
 		weight,
-		types
+		types,
+		createdInDb
 	} = data
 
 
@@ -61,6 +62,17 @@ const DetailsPage = () => {
 		dispatch(setType(type))
 		dispatch(resetFilters(true))
 		history.push(`/home?type=${type}`)
+	}
+
+
+	const deletePokemon = () => {
+		axios.delete(`/pokemons/${id}`)
+		.then(resp => {
+			dispatch(errorPopup(true, resp.data.body))
+			setTimeout(() => { dispatch(errorPopup(false, '')) }, 500)
+			history.push(`/home`)
+		})
+		.catch(err => console.log('Error', err))
 	}
 
 
@@ -109,6 +121,18 @@ const DetailsPage = () => {
 						)) }
 					</div>
 				</div>
+
+				{
+					createdInDb ?
+					(<div className={ style.actions }>
+						<button 
+							onClick={ () => deletePokemon() }
+							className={ style['btn-actions--delete'] }>
+							Quiero eliminar este Pokémon
+						</button>
+					</div>) :
+					null
+				}
 
 			</div>
 		</div>

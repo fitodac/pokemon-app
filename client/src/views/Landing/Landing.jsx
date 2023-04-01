@@ -22,7 +22,7 @@ const LandingPage = () => {
 		}
 	}, [video_loaded, dispatch])
 
-	useEffect(() => console.log(process.env.REACT_APP_API_URL), [])
+
 
 	return (
 		<section className={ style['landing-wrapper']}>

@@ -116,3 +116,31 @@
 	background: var(--brand);
 	border-color: var(--brand);
 }
+
+
+.actions{
+	padding: 0 50px 40px;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.btn-actions--delete{
+	background: #FFF;
+	border: solid 1px #b91414;
+	color: #b91414;
+	font-size: .8rem;
+	font-weight: 500;
+	line-height: 1;
+	padding: 10px 30px;
+	border-radius: 8px;
+	transition: .3s ease-in-out;
+	cursor: pointer;
+}
+
+.btn-actions--delete:hover,
+.btn-actions--delete:active,
+.btn-actions--delete:focus,
+.btn-actions--delete:active:focus{
+	background: #b91414;
+	color: #FFF;
+}

@@ -4,19 +4,20 @@ import style from './Loading.module.css'
 
 const messages = [
 	'...atrapando nuevos Pokémons',
+	'Reparando la bicicleta de Misty',
 	'...entrenando a Ivysaur',
-	'...entrenando a Spearow',
-	'...entrenando a Ekans',
+	'Estamos atrapando un Pidgeoto',
 	'...entrenando a Arbok',
-	'...entrenando a Charmander',
-	'...entrenando a Squirtle',
-	'...entrenando a Weedle',
-	'...entrenando a Pidgeoto',
-	'...pikachu está todo el tiempo pika, pika, pero no se rasca',
-	'...lustrando las Pokeballs',
+	'Corroborando la flama de Charmander',
+	'...entrenando a Spearow',
+	'...pika, pika, pika, pero no se rasca',
+	'...Squirtle, squirtle, squirtle',
 	'...dame unos segundos más por favor',
+	'...lustrando las Pokeballs',
 	'Se está demorando un poquito, pero valdrá la pena',
-	'...buscando la gorra de Ash'
+	'...buscando la gorra de Ash',
+	'pika, pika... chiuuu',
+	'El equipo Rocket nos está demorando...'
 ]
 
 const rand = () => Math.floor(Math.random() * messages.length)

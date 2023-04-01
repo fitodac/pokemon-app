@@ -58,7 +58,6 @@ const HomePage = () => {
 	useEffect(() => {
 		if( !history.location.search.length || params.has('p') ){
 			(async () => {
-				console.log('home init')
 				await loadData(getPokemons)
 			})()
 		}
@@ -72,7 +71,6 @@ const HomePage = () => {
 
 		// Search
 		if( params.has('name') ){
-			console.log('Busca por nombre') /////
 			dispatch(setType(''))
 			loadData(searchPokemon)
 		}
@@ -83,7 +81,6 @@ const HomePage = () => {
 
 	useEffect(() => {
 		const g = async () => {
-			console.log('Busca por tipo')
 			setPage(1)
 			dispatch(setType(params.get('type')))
 			await loadData(getPokemons)
@@ -108,7 +105,6 @@ const HomePage = () => {
 
 	useEffect(() => {
 		if( params.has('p')){
-			console.log('paginado')
 			setPage(params.get('p'))
 			loadData(getPokemons)
 		}
@@ -117,7 +113,6 @@ const HomePage = () => {
 
 	useEffect(() => {
 		if( init && !filters ){
-			console.log('Se borraron los filtros') ////
 			const g = async () => await loadData(getPokemons)
 			setTimeout(() => g(), 200)
 		}
