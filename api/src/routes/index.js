@@ -7,7 +7,7 @@ const {
 	getPokemonById,
 	getPokemonsBy,
 	createPokemon,
-	test
+	deletePokemon
 } = require('../controllers/pokemons')
 
 const {
@@ -72,6 +72,17 @@ router.get('/pokemons/:id', async (req, res) => {
 })
 
 
+
+router.delete('/pokemons/:id', async (req, res) => {
+	try {
+		success(req, res, await deletePokemon(req.params.id), 200, "Se obtuvieron todos los Pokémons")
+	} catch (err) {
+		error(req, res, {error: err.message}, 404)
+	}
+})
+
+
+
 router.post('/pokemons', async (req, res) => {
 	try	{
 		const pokemon = await createPokemon(req.body)
@@ -83,6 +94,7 @@ router.post('/pokemons', async (req, res) => {
 })
 
 
+
 router.get('/types', async (req, res) => {
 	try {
 		res.status(200).json(await getTypes())
@@ -91,15 +103,6 @@ router.get('/types', async (req, res) => {
 	}
 })
 
-
-
-router.get('/test', async (req, res) => {
-	try {
-		res.status(200).json(await test(req.query.type))
-	} catch (err) {
-		error(req, res, {error: err.message}, 404)
-	}
-})
 
 
 

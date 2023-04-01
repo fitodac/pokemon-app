@@ -9,7 +9,8 @@ const {
 const { Pokemon, Type } = require("../db")
 
 const per_page = 12
-const total_pokemons = 60
+const total_pokemons = 200
+const cache = []
 
 
 const getPokemons = q => {
@@ -73,8 +74,17 @@ const getPokemons = q => {
 			if( limit === total_pokemons ) return
 			limit++
 
-			const getpok = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pok_id}`).then(r => r.data)
-			const pok = parsePokemon(getpok)
+			const cached = cache.find(e => e.id === pok_id)
+			let pok = null
+
+			if( cached ){
+				pok = cached
+			}else{
+				const getpok = await axios.get(`https://pokeapi.co/api/v2/pokemon/${pok_id}`).then(r => r.data)
+				pok = parsePokemon(getpok)
+				cache.push(pok)
+			}
+
 
 			if( q_type ){
 				if( pok.types.some(e => e.toLowerCase() === q_type.toLowerCase()) ){
@@ -100,8 +110,6 @@ const getPokemons = q => {
 
 		resolve({
 			total: pokemons.length,
-			min: base_min,
-			max: base_max,
 			pages: q_type ?
 							Math.round(pokemons.length / per_page) : 
 							Math.round((total_pokemons - tot_db_pokemons) / per_page),
@@ -247,29 +255,18 @@ const createPokemon = async data => {
 
 
 
-const test = type => {
+const deletePokemon = id => {
 	return new Promise(async (resolve, reject) => {
+		if( !id ) throw new Error('Debes proporcionar el Id del Pokémon que quieres eliminar')
 
-		const pokemons = []
-		let count_types = 0
-
-		for(let i = 1; i <= total_pokemons; i++){
-			const getpok = await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`).then(r => r.data)
-			const pok = parsePokemon(getpok)
-			const { id, name, types } = pok
-			if( type ){
-				if( types.some(e => e.toLowerCase() === type.toLowerCase()) ) count_types++
-			}
-			pokemons.push({id, name, types})
-		}
-
-		resolve({
-			types: count_types,
-			pokemons
+		await Pokemon.destroy({
+			where: { id }
 		})
-
+		.then(() => resolve(`Pokémon eliminado con éxito`))
 	})
 }
+
+
 
 
 
@@ -278,5 +275,5 @@ module.exports = {
 	getPokemonById,
 	getPokemonsBy,
 	createPokemon,
-	test
+	deletePokemon
 }
