@@ -19,10 +19,8 @@ const LandingPage = () => {
 			dispatch(pageLoading(true))
 		}else{
 			dispatch(pageLoading(false))
-
 		}
 	}, [video_loaded, dispatch])
-
 
 
 	return (
@@ -62,7 +60,7 @@ const LandingPage = () => {
 				autoPlay
 				muted
 				loop
-				onLoad={ () => setVideoLoaded(true) }>
+				onLoadedData={ () => setVideoLoaded(true) }>
 					<source src={ video } type="video/mp4" />
 			</video>
 		</section>
