@@ -5,6 +5,8 @@ import {
 } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import ReactDOM from 'react-dom'
+import axios from 'axios'
+
 
 import LandingPage from './views/Landing/Landing'
 import HomePage from './views/Home/Home'
@@ -18,6 +20,9 @@ import Sidebar from './components/Sidebar/Sidebar'
 import Hero from './components/Hero/Hero'
 import Footer from './components/Footer/Footer'
 import Popup from './components/Popup/Popup'
+
+axios.defaults.baseURL = process.env.REACT_APP_API_URL
+
 
 
 const AlertServerError = props => {

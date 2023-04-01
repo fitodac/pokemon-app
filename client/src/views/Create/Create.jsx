@@ -133,7 +133,7 @@ const CreatePage = () => {
 		for( let key in _errors)if( !_errors[key].valid ) valid_form = false
 		
 		if( valid_form ){
-			axios.post(`http://localhost:3001/pokemons`, data)
+			axios.post(`/pokemons`, data)
 				.then(resp => {
 					dispatch(pageLoading(true))
 					history.push('/home')

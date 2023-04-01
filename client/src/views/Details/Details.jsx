@@ -39,7 +39,7 @@ const DetailsPage = () => {
 
 			const getdata = async () => {
 				if( !data.length ) 
-					await axios.get(`http://localhost:3001/pokemons/${id}`)
+					await axios.get(`/pokemons/${id}`)
 						.then(resp => {
 							setData(resp.data)
 							dispatch(errorPopup(false, ''))

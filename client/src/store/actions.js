@@ -1,8 +1,4 @@
 import axios from 'axios'
-import { setUrlPager } from '../utils/url'
-
-
-const api = 'http://localhost:3001/'
 
 const pageLoading = val => {
 	return dispatch => dispatch({ type: 'PAGE_LOAD', payload: val })
@@ -13,7 +9,7 @@ const pageLoading = val => {
 const getPokemons = params => {
 	
 	const { search } = params
-	let url = `${api}pokemons`
+	let url = `/pokemons`
 
 	return async function(dispatch){
 		if( search ) url += `${search}`
@@ -43,7 +39,7 @@ const getPokemons = params => {
 
 const getTypes = () => {
 	return async function(dispatch){
-		return await axios.get(`${api}types`)
+		return await axios.get(`/types`)
 			.then(resp => {
 				dispatch({ type: 'GET_TYPES', payload: resp.data })
 				dispatch({ type: 'SERVER_ERROR', payload: false })
@@ -67,7 +63,7 @@ const searchPokemon = params => {
 			return
 		}
 
-		return await axios.get(`${api}pokemons/${search}`)
+		return await axios.get(`/pokemons/${search}`)
 			.then(resp => {
 				// params = new URLSearchParams(search)
 				// dispatch({ type: 'SET_SEARCH', payload: params.get('name') })
