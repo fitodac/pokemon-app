@@ -169,7 +169,7 @@ const Sidebar = () => {
 						
 						<div className={ style['filter-box--body']}>
 							<div>
-								{ types.length ? 
+								{ types.length > 0 ? 
 								(<>
 									<div className={ style['filter-box--label']}>Por tipo</div>
 									
