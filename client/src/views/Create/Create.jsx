@@ -39,20 +39,24 @@ const CreatePage = () => {
 	const [ modal_open, setModalOpen ] = useState(false)
 	const [ saving, setSaving ] = useState(false)
 	const [ thumbnails, setThumbnails ] = useState(image_list)
+	const [is_mounted, setIsMounted] = useState(false)
 
 
 	useEffect(() => {
-		dispatch(pageLoading(true))
+		if( !is_mounted ){
+			dispatch(pageLoading(true))
 
-		const getdata = async () => {
-			if( !types_list.length ) await dispatch(getTypes())
-			dispatch(pageLoading(false))
+			const getdata = async () => {
+				if( !types_list.length ) await dispatch(getTypes())
+				dispatch(pageLoading(false))
 
-			setTimeout(() => dispatch(pageLoading(false)), 1000)
+				setTimeout(() => dispatch(pageLoading(false)), 1000)
+			}
+			
+			getdata()
+			setIsMounted(true)
 		}
-		
-		getdata()
-	}, [])
+	}, [dispatch, types_list, is_mounted])
 
 
 
