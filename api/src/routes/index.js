@@ -1,4 +1,3 @@
-const { roleTypes } = require('element-plus');
 const { Router } = require('express');
 // Importar todos los routers;
 // Ejemplo: const authRouter = require('./auth.js');
