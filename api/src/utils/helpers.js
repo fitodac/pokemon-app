@@ -65,7 +65,6 @@ const sortByAttack = (pokemons, order) => {
 		else return 0
 	})
 
-	// pokemons.forEach(e => console.log( e.attack ) )
 	return pokemons
 }
 
