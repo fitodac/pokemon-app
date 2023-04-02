@@ -5,6 +5,7 @@ import {
 	pageLoading,
 	errorPopup,
 	setType,
+	setSort,
 	resetFilters
 } from '../../store/actions'
 import { useHistory, useParams } from 'react-router-dom'
@@ -69,7 +70,11 @@ const DetailsPage = () => {
 		axios.delete(`/pokemons/${id}`)
 		.then(resp => {
 			dispatch(errorPopup(true, resp.data.body))
+			dispatch(setType(''))
+			dispatch(setSort('', ''))
+			dispatch(resetFilters(true))
 			setTimeout(() => { dispatch(errorPopup(false, '')) }, 500)
+
 			history.push(`/home`)
 		})
 		.catch(err => console.log('Error', err))

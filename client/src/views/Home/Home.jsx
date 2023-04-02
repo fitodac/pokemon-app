@@ -23,7 +23,6 @@ const HomePage = () => {
 
 	const dispatch = useDispatch(),
 				data = useSelector(state => state.pokemons),
-				page = useSelector(state => state.page),
 				type = useSelector(state => state.type),
 				sort = useSelector(state => state.sort),
 				order = useSelector(state => state.order),
@@ -56,8 +55,10 @@ const HomePage = () => {
 
 
 	useEffect(() => {
-		if( !history.location.search.length || params.has('p') ){
+		if( !init && !params.has('type') ){
 			(async () => {
+				// console.log('Inicia la página')
+				if( params.has('p') ) dispatch(setPage(params.get('p')))
 				await loadData(getPokemons)
 			})()
 		}
@@ -71,25 +72,42 @@ const HomePage = () => {
 
 		// Search
 		if( params.has('name') ){
-			dispatch(setType(''))
-			loadData(searchPokemon)
+			(async () => {
+				dispatch(setType(''))
+				await loadData(searchPokemon)
+			})()
+		}
+
+		if( params.has('type') ){
+			(async () => {
+				// console.log('Filtra por type')
+				dispatch(setPage(1))
+				dispatch(setType(params.get('type')))
+				await loadData(getPokemons)
+			})()
+		}
+
+		if( init && params.has('p') ){
+			(async () => {
+				// console.log('Tiene paginación (1)')
+				dispatch(setPage(params.get('p')))
+				await loadData(getPokemons)
+			})()
+		}
+
+		if( init && !params.has('p') && !params.has('type') && !params.has('sort') && !params.has('order')){
+			dispatch(setPage(1))
+			loadData(getPokemons)
 		}
 
 	}, [history.location.search]) // eslint-disable-line react-hooks/exhaustive-deps
+	
 
 
 
 	useEffect(() => {
-		const g = async () => {
-			setPage(1)
-			dispatch(setType(params.get('type')))
-			await loadData(getPokemons)
-		}
-		if( !loadingData && filters ) g()
-	}, [type]) // eslint-disable-line react-hooks/exhaustive-deps
+		// if( params.has('sort')) console.log('Filtra por sort')
 
-
-	useEffect(() => {
 		switch(sort){
 			case 'name':
 				setPokemons( sortByName(pokemons, order) )
@@ -102,13 +120,6 @@ const HomePage = () => {
 		}
 	}, [sort, order]) // eslint-disable-line react-hooks/exhaustive-deps
 
-
-	useEffect(() => {
-		if( params.has('p')){
-			setPage(params.get('p'))
-			loadData(getPokemons)
-		}
-	}, [page]) // eslint-disable-line react-hooks/exhaustive-deps
 
 
 	useEffect(() => {

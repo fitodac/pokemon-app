@@ -16,6 +16,8 @@ const getPokemons = params => {
 		
 		return await axios.get(url)
 			.then(resp => {
+				// console.log('El server respondión con', resp.data)
+				
 				dispatch({ type: 'GET_POKEMONS', payload: resp.data })
 				dispatch({ type: 'SERVER_ERROR', payload: false })
 				return true

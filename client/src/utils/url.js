@@ -1,13 +1,27 @@
-
 const setUrlSearch = val => {
 	const url_path = window.location.pathname
-	return `${url_path}?name=${val}`
+
+	return {
+		pathname: url_path,
+		search: `?name=${val}`
+	}
 }
+
+
 
 const setUrlType = val => {
 	const url_path = window.location.pathname
-	return val ? `${url_path}?type=${val}` : `${url_path}`
+	return val ? 
+	{
+		pathname: url_path,
+		search: `?type=${val}`
+	} : 
+	{ 
+		pathname: url_path 
+	}
 }
+
+
 
 const setUrlSort = (type, val) => {
 	const url_path = window.location.pathname
@@ -18,8 +32,13 @@ const setUrlSort = (type, val) => {
 	let search = ''
 	for(const [i,v] of params) search += `${i}=${v}&`
 	
-	return `${url_path}?${search.slice(0,-1)}`
+	return {
+		pathname: url_path,
+		search: search.slice(0,-1)
+	}
 }
+
+
 
 const setUrlPager = p => {
 	const url_path = window.location.pathname
@@ -27,7 +46,10 @@ const setUrlPager = p => {
 	params.set('p', p)
 	let search = ''
 	for(const [i,v] of params) search += `${i}=${v}&`
-	return `${url_path}?${search.slice(0,-1)}`
+	return {
+		pathname: url_path,
+		search: search.slice(0,-1)
+	}
 }
 
 

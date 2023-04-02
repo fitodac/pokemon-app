@@ -107,13 +107,20 @@ const Sidebar = () => {
 
 	// Reset filters
 	const filterReset = async () => {
-		dispatch(resetFilters(false))
-		setSearch('')
-		dispatch(setType(''))
-		dispatch(setSort('', ''))
-		dispatch(setPage(1))
-		setTimeout(() => history.push(`/home`), 200)
+		history.push(`/home`)
+		setTimeout(() => {
+			dispatch(resetFilters(false))
+			setSearch('')
+			dispatch(setType(''))
+			dispatch(setSort('', ''))
+			dispatch(setPage(1))
+		}, 200)
 	}
+
+
+	useEffect(() => {
+		if( !params.has('sort') ) dispatch(setSort('', ''))
+	}, [history.location.search]) // eslint-disable-line react-hooks/exhaustive-deps
 
 
 	const filterNameAsc_ClassName = () => setFilterBtnClassName('name' === sort, order, 'asc')

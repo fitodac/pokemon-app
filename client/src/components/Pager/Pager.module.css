@@ -30,6 +30,7 @@
 	border-radius: 6px;
 	transition: .3s ease-in-out;
 	cursor: pointer;
+	user-select: none;
 }
 
 .item:hover,

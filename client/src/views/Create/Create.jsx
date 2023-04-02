@@ -2,7 +2,12 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
-import { pageLoading, getTypes } from '../../store/actions'
+import { 
+	pageLoading, 
+	getTypes,
+	setPage,
+	errorPopup
+} from '../../store/actions'
 import { validate } from '../../utils/validate'
 import image_list from '../../utils/images-list'
 
@@ -136,11 +141,19 @@ const CreatePage = () => {
 			axios.post(`/pokemons`, data)
 				.then(resp => {
 					dispatch(pageLoading(true))
+					dispatch(setPage(1))
 					history.push('/home')
 				})
 				.catch(err => {
-					console.log(err)
-					setSaving(false)
+					const error = err.response.data.error.error
+					dispatch(errorPopup(true, error))
+					
+					setTimeout(() => {
+						dispatch(errorPopup(false, error))
+						setTimeout(() => setSaving(false), 1000)
+						setTimeout(() => dispatch(errorPopup(false, null)), 2000)
+					}, 2000)
+
 				})
 
 			return
