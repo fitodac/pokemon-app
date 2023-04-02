@@ -13,8 +13,10 @@ const getTypes = () => {
 							})
 		}else{
 			const get_types = await axios.get('https://pokeapi.co/api/v2/type').then(resp => resp.data.results)
-			get_types.forEach(e => Type.findOrCreate({ where: { name: e.name }}))
-			types = await Type.findAll({ attributes: ['id', 'name', 'createdInDb']})
+			if('unknow' !== e.name){
+				get_types.forEach(e => Type.findOrCreate({ where: { name: e.name }}))
+				types = await Type.findAll({ attributes: ['id', 'name', 'createdInDb']})
+			}
 		}
 		
 		resolve(types)

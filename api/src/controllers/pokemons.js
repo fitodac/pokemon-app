@@ -51,7 +51,8 @@ const getPokemons = q => {
 			}
 		})
 		
-		for(let idx in local_pokemons.reverse()) pokemons.push(parseLocalPokemon(local_pokemons[idx].dataValues))
+		// for(let idx in local_pokemons.reverse()) pokemons.push(parseLocalPokemon(local_pokemons[idx].dataValues))
+		for(let idx in local_pokemons) pokemons.push(parseLocalPokemon(local_pokemons[idx].dataValues))
 
 		// Filter by type
 		if( q_type )

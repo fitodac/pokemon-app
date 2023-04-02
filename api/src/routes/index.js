@@ -72,7 +72,7 @@ router.get('/pokemons/:id', async (req, res) => {
 })
 
 
-
+// Delete pokémon
 router.delete('/pokemons/:id', async (req, res) => {
 	try {
 		success(req, res, await deletePokemon(req.params.id), 200, "Se obtuvieron todos los Pokémons")
@@ -82,7 +82,7 @@ router.delete('/pokemons/:id', async (req, res) => {
 })
 
 
-
+// Create pokémon
 router.post('/pokemons', async (req, res) => {
 	try	{
 		const pokemon = await createPokemon(req.body)
