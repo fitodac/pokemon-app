@@ -6,7 +6,7 @@ import {
 import { useHistory } from 'react-router-dom'
 import { 
 	getTypes, 
-	pageLoading,
+	// pageLoading,
 	setType,
 	setSort,
 	setPage,
@@ -65,11 +65,11 @@ const Sidebar = () => {
 
 	useEffect(() => {
 		if( !is_mounted){
-			dispatch(pageLoading(true))
+			// dispatch(pageLoading(true))
 
 			const getdata = async () => {
 				if( !types.length ) await dispatch(getTypes())
-				dispatch(pageLoading(false))
+				// dispatch(pageLoading(false))
 			}
 
 			getdata()
