@@ -31,20 +31,20 @@ const HomePage = () => {
 	useEffect(() => setPokemons(data), [data])
 	const history = useHistory(),
 				params = new URLSearchParams(history.location.search),
-				[loadingData, setLoadingData] = useState(false),
+				// [loadingData, setLoadingData] = useState(false),
 				[init, setInit] = useState(false)
 
 
 
 	const loadData = async (cb) => {
-		setLoadingData(true)
+		// setLoadingData(true)
 		dispatch(pageLoading(true))
 		const args = {}
 		if( history.location.search ) args.search = history.location.search
 		const data = await dispatch(cb(args))
 		
 		if( data ){
-			setLoadingData(false)
+			// setLoadingData(false)
 			dispatch(pageLoading(false))
 		}
 		
