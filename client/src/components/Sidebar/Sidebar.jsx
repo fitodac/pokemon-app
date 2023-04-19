@@ -89,7 +89,7 @@ const Sidebar = () => {
 	}
 
 
-	// Filter by name
+	// Sort by name
 	const filterName = e => {
 		dispatch(setSort('name', e))
 		dispatch(resetFilters(true))
@@ -97,7 +97,7 @@ const Sidebar = () => {
 	}
 
 
-	// Filter by attack
+	// Sort by attack
 	const filterAttack = e => {
 		dispatch(setSort('attack', e))
 		dispatch(resetFilters(true))

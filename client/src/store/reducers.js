@@ -6,7 +6,6 @@ const initial_state = {
 	sort: '',
 	order: '',
 	filters: false,
-	// search: '',
 	types: [],
 	server_error: false,
 	popup: {
@@ -41,9 +40,6 @@ const rootReducer = (state = initial_state, action) => {
 		
 		case 'FILTERS':
 			return {...state, filters: action.payload}
-
-		// case 'SET_SEARCH':
-		// 	return {...state, search: action.payload}
 		
 		case 'PAGE_LOAD':
 			return {...state, loading: action.payload }
