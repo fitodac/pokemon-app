@@ -7,6 +7,7 @@ import {
 	getTypes,
 	setPage,
 	errorPopup,
+	setType,
 	resetFilters
 } from '../../store/actions'
 import { validate } from '../../utils/validate'
@@ -49,6 +50,7 @@ const CreatePage = () => {
 
 
 	useEffect(() => {
+		dispatch(setType(''))
 		dispatch(resetFilters(true))
 	}, [dispatch])
 
