@@ -6,7 +6,8 @@ import {
 	pageLoading, 
 	getTypes,
 	setPage,
-	errorPopup
+	errorPopup,
+	resetFilters
 } from '../../store/actions'
 import { validate } from '../../utils/validate'
 import image_list from '../../utils/images-list'
@@ -45,6 +46,11 @@ const CreatePage = () => {
 	const [ saving, setSaving ] = useState(false)
 	const [ thumbnails, setThumbnails ] = useState(image_list)
 	const [is_mounted, setIsMounted] = useState(false)
+
+
+	useEffect(() => {
+		dispatch(resetFilters(true))
+	}, [dispatch])
 
 
 	useEffect(() => {
